@@ -1,0 +1,27 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Use your Vercel PostgreSQL URL
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  clerkId   String   @unique
+  createdAt DateTime @default(now())
+}
+
+model SharedChart {
+  id              String   @id @default(cuid())
+  ownerEmail      String
+  receiverEmails  String[]
+  requestEmails   String[]
+  filter          Json
+  selectedProduct String
+  chartId         String   @unique // This can still be plain or encrypted based on your design
+  createdAt       DateTime @default(now())
+}
