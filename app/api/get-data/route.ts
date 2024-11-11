@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { google } from 'googleapis';
+import fs from 'fs';
 
 const cache = new Map();
 
@@ -12,41 +13,35 @@ export async function GET() {
   }
 
   try {
-    const sheets = google.sheets('v4');
+    // Load the Google Service JSON credentials directly
+    const credentials = JSON.parse(fs.readFileSync('google-sheet-service.json', 'utf-8'));
+
+    // Authenticate with Google API using the service account key
     const auth = new google.auth.GoogleAuth({
-      credentials: {
-        type: process.env.GOOGLE_TYPE,
-        project_id: process.env.GOOGLE_PROJECT_ID,
-        private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'), // Handle newline characters
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        client_id: process.env.GOOGLE_CLIENT_ID,
-      },
+      credentials,
       scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     });
 
-    // Auth client
-    const authClient = await auth.getClient();
+    // Create the sheets client with the authenticated credentials
+    const sheets = google.sheets({ version: 'v4', auth });
 
-    // Spreadsheet ID and range (the URL you provided)
-    const spreadsheetId = '1l7GstWHc69HPV0irSdvoMIyHgtufUPKsbtCiNw7IKR0';
-    const range = 'Sheet3!A1:I105'; // Update the range to what you need
-
+    // Fetch data from the specific sheet and range (Sheet3!A1:I105)
     const response = await sheets.spreadsheets.values.get({
-      auth: authClient,
-      spreadsheetId,
-      range,
-    } as any);
+      spreadsheetId: '1l7GstWHc69HPV0irSdvoMIyHgtufUPKsbtCiNw7IKR0',
+      range: 'Sheet3!A1:I105',
+    });
 
-    // Return the data from the Google Sheet
     const rows = response.data.values;
 
-    if (rows && rows.length > 0) {
-      cache.set(cacheKey, rows); // Cache the fetched data
-      return NextResponse.json({ data: rows });
-    } else {
-      return NextResponse.json({ message: 'No data found' });
+    if (!rows || rows.length === 0) {
+      return NextResponse.json({ data: [], message: 'No data found' });
     }
+
+    // Cache the data for future requests
+    cache.set(cacheKey, rows);
+
+    // Return the fetched data as JSON
+    return NextResponse.json({ data: rows });
   } catch (error) {
     console.error(`This is the Error of catch block in get data is ${error}`);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

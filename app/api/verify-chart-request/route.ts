@@ -22,7 +22,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Chart not found." }, { status: 404 });
     }
 
-    // Step 3: Verify if the userEmail is in the receiverEmails list (has access)
+    // Step 3: Verify if the user is the owner
+    if (sharedChart.ownerEmail === userEmail) {
+      const requestEmails = sharedChart.requestEmails;
+      return NextResponse.json({
+        message: "Chart access granted to owner.",
+        data: {
+          filter: sharedChart.filter,
+          selectedProduct: sharedChart.selectedProduct,
+          requestEmails: requestEmails,
+          isOwner: true, // Add this flag
+        },
+      });
+    }
+
+    // Step 4: Verify if the userEmail is in the receiverEmails list (has access)
     const isAuthorized = sharedChart.receiverEmails.includes(userEmail);
     if (isAuthorized) {
       return NextResponse.json({
@@ -34,7 +48,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Step 4: Check if the user has already requested access
+    // Step 5: Check if the user has already requested access
     const hasRequestedAccess = sharedChart.requestEmails.includes(userEmail);
     if (hasRequestedAccess) {
       return NextResponse.json({
@@ -43,7 +57,7 @@ export async function POST(req: NextRequest) {
       }, { status: 409 }); // 409 Conflict
     }
 
-    // Step 5: If not authorized and no request, return the authorization error
+    // Step 6: If not authorized and no request, return the authorization error
     return NextResponse.json({ error: "You are not authorized to view this chart." }, { status: 403 });
   } catch (error) {
     console.error(`This is the error when verifying the token: ${error}`);

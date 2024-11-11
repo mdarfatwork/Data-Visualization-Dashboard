@@ -1,42 +1,9 @@
 "use client";
 import { Button } from '@/components/ui/button';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
-const RequestedEmail = ({ token, userEmail }: { token: string, userEmail: string }) => {
-  const [requestedEmails, setRequestedEmails] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Memoized API call to fetch requested emails
-  const fetchRequestedEmails = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/get-access-request-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, userEmail }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setRequestedEmails(data.requestEmails || []);
-        setError(null);
-      } else {
-        setError(data.message || 'Something went wrong');
-      }
-    } catch (error) {
-      console.error('Error fetching requested emails:', error);
-      setError('Failed to fetch requested emails.');
-    } finally {
-      setLoading(false);
-    }
-  }, [token, userEmail]);
-
-  // Fetch data on component mount
-  useEffect(() => {
-    fetchRequestedEmails();
-  }, [fetchRequestedEmails]);
+const RequestedEmail = ({ token, userEmail, requestedEmailsList }: { token: string, userEmail: string, requestedEmailsList: string[] }) => {
+  const [requestedEmails, setRequestedEmails] = useState<string[]>(requestedEmailsList);
 
   // Memoized function to handle access request updates
   const updateAccessRequest = useCallback(async (email: string, action: 'accept' | 'reject') => {
@@ -69,9 +36,7 @@ const RequestedEmail = ({ token, userEmail }: { token: string, userEmail: string
     updateAccessRequest(email, 'reject');
   }, [updateAccessRequest]);
 
-  // Conditional rendering based on loading and error states
-  if (loading) return <p>Loading requested emails...</p>;
-  if (error) return <p>{error}</p>;
+  if(!RequestedEmail) return null;
 
   return (
     <div className='w-full px-5'>
