@@ -25,6 +25,7 @@ interface DialogDemoProps {
 
 export function ShareChart({ filter, selectedProduct }: DialogDemoProps) {
   const [email, setEmail] = useState("");
+  const [chartName, setChartName] = useState("");
   const [shareUrl, setShareUrl] = useState<string | null>(null); // Store generated URL
   const [copied, setCopied] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +37,7 @@ export function ShareChart({ filter, selectedProduct }: DialogDemoProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, filter, selectedProduct }),
+        body: JSON.stringify({ email, chartName, filter, selectedProduct }),
       });
 
       if (!response.ok) {
@@ -95,6 +96,18 @@ export function ShareChart({ filter, selectedProduct }: DialogDemoProps) {
         ) : (
           <>
             <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="chartName" className="text-right">
+                  Chart Name
+                </Label>
+                <Input
+                  id="chartName"
+                  value={chartName}
+                  onChange={(e) => setChartName(e.target.value)}
+                  className="col-span-3"
+                  required
+                />
+              </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">
                   Email
@@ -104,8 +117,8 @@ export function ShareChart({ filter, selectedProduct }: DialogDemoProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)} // Update email state on input change
                   className="col-span-3"
-                  type="email" // Set type to email for validation
-                  required // Optional: make the input required
+                  type="email"
+                  required
                 />
               </div>
             </div>

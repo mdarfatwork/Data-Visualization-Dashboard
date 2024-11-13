@@ -20,6 +20,7 @@ model SharedChart {
   ownerEmail      String
   receiverEmails  String[]
   requestEmails   String[]
+  chartName       String
   filter          Json
   selectedProduct String
   chartId         String   @unique // This can still be plain or encrypted based on your design

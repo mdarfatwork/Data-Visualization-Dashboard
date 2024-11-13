@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
           selectedProduct: sharedChart.selectedProduct,
           requestEmails: requestEmails,
           isOwner: true, // Add this flag
+          title: sharedChart.chartName,
         },
       });
     }
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest) {
         data: {
           filter: sharedChart.filter,
           selectedProduct: sharedChart.selectedProduct,
+          title: sharedChart.chartName,
         },
       });
     }

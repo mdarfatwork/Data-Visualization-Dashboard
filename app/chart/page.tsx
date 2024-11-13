@@ -48,10 +48,9 @@ const Page = async ({ searchParams }: PageProps) => {
                 </div>
             );
         }
-
         return (
             <div>
-                <ChartFlow filter={data.data.filter} selectedProduct={data.data.selectedProduct} />
+                <ChartFlow title={data.data.title} filter={data.data.filter} selectedProduct={data.data.selectedProduct} />
                 {data.data.isOwner && (
                     <RequestedEmail requestedEmailsList={data.data.requestEmails} token={token} userEmail={userEmail} />
                 )}

@@ -53,7 +53,7 @@ const SignInForm = () => {
   
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
-        router.push('/');
+        router.push('/dashboard');
       } else {
         setError({ field: 'unknown', message: 'Sign-in failed. Please try again.' });
       }

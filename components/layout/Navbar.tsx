@@ -25,6 +25,7 @@ const Navbar = () => {
                 <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
                     {isSignedIn ? (
                         <>
+                        <Link href="/charts" className="mr-5 hover:text-gray-900">Charts</Link>
                         <Link href="/dashboard" className="mr-5 hover:text-gray-900">Dashboard</Link>
                         <span onClick={logOut} className="mr-5 hover:text-gray-900 cursor-pointer">Log Out</span>
                         </>

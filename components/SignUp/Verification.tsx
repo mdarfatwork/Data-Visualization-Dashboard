@@ -41,7 +41,7 @@ const Verification = () => {
             
             if (register.status === 200) {
               await setActive({ session: createdSessionId });
-              router.push('/');
+              router.push('/dashboard');
             } else {
               setError('Failed to Sign Up');
               console.log('Register failed:', register);

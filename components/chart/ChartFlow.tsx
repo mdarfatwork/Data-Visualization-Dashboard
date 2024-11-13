@@ -12,9 +12,10 @@ interface ChartFlowProps {
     dateRange?: { from: string; to: string };
   };
   selectedProduct: string | null;
+  title: string;
 }
 
-const ChartFlow = ({ filter, selectedProduct }: ChartFlowProps) => {
+const ChartFlow = ({ filter, selectedProduct, title }: ChartFlowProps) => {
   const [data, setData] = useState<any[]>([]);   // Use ChartData[] instead of any[]
   const [lineChartData, setLineChartData] = useState<any[]>([]);
 
@@ -24,7 +25,7 @@ const ChartFlow = ({ filter, selectedProduct }: ChartFlowProps) => {
       const res = await fetch('/api/get-data');
       const json = await res.json();
       setData(json.data.slice(1));
-      
+
     };
     fetchData();
   }, []);
@@ -84,14 +85,17 @@ const ChartFlow = ({ filter, selectedProduct }: ChartFlowProps) => {
   if (!data.length) return <Loading />;
 
   return (
-    <section className="w-full p-5 flex flex-col xl:flex-row gap-3">
-      <div className="w-full xl:flex-1">
-        <ChartComponent chartData={chartData} />
-      </div>
-      <div className="w-full xl:flex-1">
-        {lineChartData.length > 0 && <LineChartComponent chartData={lineChartData} />}
-      </div>
-    </section>
+    <>
+      <h1 className='text-2xl text-center'>{title}</h1>
+      <section className="w-full p-5 flex flex-col xl:flex-row gap-3">
+        <div className="w-full xl:flex-1">
+          <ChartComponent chartData={chartData} />
+        </div>
+        <div className="w-full xl:flex-1">
+          {lineChartData.length > 0 && <LineChartComponent chartData={lineChartData} />}
+        </div>
+      </section>
+    </>
   );
 };
 

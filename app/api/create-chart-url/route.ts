@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req: NextRequest) {
     try {
-        const { email, filter, selectedProduct } = await req.json();
+        const { email, chartName, filter, selectedProduct } = await req.json();
         const user = await currentUser();
         const ownerEmail = user?.emailAddresses[0].emailAddress;
 
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
             data: {
                 ownerEmail,
                 receiverEmails: [email], // Assuming you're sharing with a single email for now
+                chartName,
                 filter, // This can stay as JSON
                 selectedProduct,
                 chartId, // Store the plain chartId
